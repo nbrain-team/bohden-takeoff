@@ -7,8 +7,8 @@ from selenium import webdriver
 from selenium.webdriver.common.by import By
 
 # Load the saved model and scaler
-model = joblib.load('/c:/Users/NAVYA/Documents/LNT- Hackathon/project_delay_duration_model.pkl')
-scaler = joblib.load('/c:/Users/NAVYA/Documents/LNT- Hackathon/scaler.pkl')
+model = joblib.load('/c:/Users/NAVYA/Documents/LNT- Hackathon/backend/models/project_delay_duration_model.pkl')
+scaler = joblib.load('/c:/Users/NAVYA/Documents/LNT- Hackathon/backend/models/scaler.pkl')
 
 # Function to automate data collection
 def collect_data():
@@ -49,10 +49,10 @@ def collect_data():
 # Function to automate data preprocessing
 def preprocess_data(new_data):
     new_data = pd.get_dummies(new_data, drop_first=True)
-    missing_cols = set(X.columns) - set(new_data.columns)
+    missing_cols = set(scaler.feature_names_in_) - set(new_data.columns)
     for col in missing_cols:
         new_data[col] = 0
-    new_data = new_data[X.columns]
+    new_data = new_data[scaler.feature_names_in_]
     new_data_scaled = scaler.transform(new_data)
     return new_data_scaled
 

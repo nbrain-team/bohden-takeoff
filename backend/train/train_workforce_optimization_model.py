@@ -27,7 +27,7 @@ model = LinearRegression()
 model.fit(X_train_scaled, y_train)
 
 # Save the model and scaler
-joblib.dump(model, '/c:/Users/NAVYA/Documents/LNT- Hackathon/project_workforce_optimization_model.pkl')
-joblib.dump(scaler, '/c:/Users/NAVYA/Documents/LNT- Hackathon/scaler.pkl')
+joblib.dump(model, 'C:\\Users\\NAVYA\\Documents\\LNT- Hackathon\\project_workforce_optimization_model.pkl')
+joblib.dump(scaler, 'C:\\Users\\NAVYA\\Documents\\LNT- Hackathon\\scaler.pkl')
 
 print("Workforce optimization model trained and saved successfully.")

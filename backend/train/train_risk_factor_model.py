@@ -9,7 +9,7 @@ data = pd.read_csv('/c:/Users/NAVYA/Documents/LNT- Hackathon/construction_delay_
 
 # Preprocess the data
 X = data.drop(columns=['Project ID', 'City', 'Project Type', 'Start Date', 'End Date', 'Delayed', 'Delay Duration (days)', 'Delay Reason'])
-y = data['Delayed'].astype(int)  # Assuming 'Delayed' indicates supply chain disruptions
+y = data['Delayed'].astype(int)  # Assuming 'Delayed' indicates risk factors
 
 # One-hot encode categorical variables
 X = pd.get_dummies(X, drop_first=True)
@@ -22,12 +22,12 @@ scaler = StandardScaler()
 X_train_scaled = scaler.fit_transform(X_train)
 X_test_scaled = scaler.transform(X_test)
 
-# Train the supply chain model
+# Train the risk factor model
 model = LogisticRegression()
 model.fit(X_train_scaled, y_train)
 
 # Save the model and scaler
-joblib.dump(model, '/c:/Users/NAVYA/Documents/LNT- Hackathon/project_supply_chain_model.pkl')
-joblib.dump(scaler, '/c:/Users/NAVYA/Documents/LNT- Hackathon/scaler.pkl')
+joblib.dump(model, 'C:\\Users\\NAVYA\\Documents\\LNT- Hackathon\\project_risk_factor_model.pkl')
+joblib.dump(scaler, 'C:\\Users\\NAVYA\\Documents\\LNT- Hackathon\\scaler.pkl')
 
-print("Supply chain model trained and saved successfully.")
+print("Risk factor model trained and saved successfully.")
