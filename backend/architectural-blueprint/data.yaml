@@ -1,0 +1,13 @@
+train: ../architectural-blueprint/train/images
+val: ../architectural-blueprint/valid/images
+test: ../architectural-blueprint/test/images
+
+nc: 14
+names: ['background', 'space_balconi', 'space_bedroom', 'space_dressroom', 'space_elevator', 'space_elevator_hall', 'space_front', 'space_kitchen', 'space_living_room', 'space_multipurpose_space', 'space_other', 'space_outdoor_room', 'space_staircase', 'space_toilet']
+
+roboflow:
+  workspace: estima-zza1m
+  project: architectural-blueprint
+  version: 2
+  license: CC BY 4.0
+  url: https://universe.roboflow.com/estima-zza1m/architectural-blueprint/dataset/2
