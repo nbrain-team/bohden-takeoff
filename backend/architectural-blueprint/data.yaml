@@ -1,6 +1,6 @@
-train: ../architectural-blueprint/train/images
-val: ../architectural-blueprint/valid/images
-test: ../architectural-blueprint/test/images
+train: ../train/images
+val: ../valid/images
+test: ../test/images
 
 nc: 14
 names: ['background', 'space_balconi', 'space_bedroom', 'space_dressroom', 'space_elevator', 'space_elevator_hall', 'space_front', 'space_kitchen', 'space_living_room', 'space_multipurpose_space', 'space_other', 'space_outdoor_room', 'space_staircase', 'space_toilet']

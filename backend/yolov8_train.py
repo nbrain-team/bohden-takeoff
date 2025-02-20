@@ -1,27 +1,32 @@
 from ultralytics import YOLO
 import os
 from tqdm import tqdm
+import torch
 
-# Debugging: Print the current working directory
-print(f"Current working directory: {os.getcwd()}")
+def train_model():
+    # Debugging: Print the current working directory
+    print(f"Current working directory: {os.getcwd()}")
 
+    # Check if CUDA is available
+    if not torch.cuda.is_available():
+        raise RuntimeError("CUDA is not available. Please ensure you have a compatible GPU and CUDA installed.")
 
+    device = 'cuda'
+    print(f"Using GPU: {torch.cuda.get_device_name(0)}")
 
-# Load YOLOv8 model
-model = YOLO("yolov8n.pt")  # Pretrained model
+    # Load YOLOv8 model
+    model = YOLO("yolov8n.pt")  # Pretrained model
 
-# Train on the blueprint dataset
-data_path = os.path.join(os.getcwd(), "architectural-blueprint", "data.yaml")
-print(f"Data path: {data_path}")
+    # Train on the blueprint dataset
+    data_path = os.path.join(os.getcwd(), "architectural-blueprint", "data.yaml")
+    print(f"Data path: {data_path}")
 
-# Initialize progress bar
-epochs = 10
-with tqdm(total=epochs, desc="Training Progress") as pbar:
-    for epoch in range(epochs):
-        results = model.train(data=data_path, epochs=5, imgsz=320, device=0)
-        pbar.update(1)
+    # Train the model for 20 epochs
+    results = model.train(data=data_path, epochs=20, imgsz=320, device=device)
 
-# Print the results
-print(f"Training results: {results}")
-print(f"Model accuracy: {results.metrics['accuracy']}")
-print(f"Model F1 score: {results.metrics['f1']}")
+    # Save the trained model
+    model.save("best.pt")
+
+    
+if __name__ == '__main__':
+    train_model()
