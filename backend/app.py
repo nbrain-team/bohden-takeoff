@@ -2,8 +2,10 @@ from flask import Flask, request, jsonify
 import pandas as pd
 import joblib
 from sklearn.preprocessing import StandardScaler
-from flask_cors import CORS  # Import CORS
+from flask_cors import CORS
 import logging
+from ultralytics import YOLO
+import os
 
 app = Flask(__name__)
 CORS(app)  # Enable CORS
@@ -14,6 +16,9 @@ logging.basicConfig(level=logging.DEBUG)
 # Load the saved cost overrun model and scaler
 cost_overrun_model = joblib.load('C:\\Users\\NAVYA\\Documents\\LNT- Hackathon\\backend\\models\\project_cost_overrun_model.pkl')
 scaler = joblib.load('C:\\Users\\NAVYA\\Documents\\LNT- Hackathon\\backend\\models\\scaler.pkl')
+
+# Load the YOLO model
+yolo_model = YOLO("best.pt")
 
 @app.route('/predict', methods=['POST'])
 def predict():
@@ -54,6 +59,36 @@ def predict():
     logging.debug(f"Prediction: {prediction}")
     
     return jsonify({'prediction': 'Yes' if prediction[0] == 1 else 'No'})
+
+@app.route('/detect', methods=['POST'])
+def detect():
+    if 'file' not in request.files:
+        logging.error("No file uploaded")
+        return jsonify({'error': 'No file uploaded'}), 400
+    
+    file = request.files['file']
+    if file.filename == '':
+        logging.error("No file selected")
+        return jsonify({'error': 'No file selected'}), 400
+    
+    try:
+        # Save the uploaded file to a temporary directory
+        temp_dir = os.path.join(os.getcwd(), "temp")
+        os.makedirs(temp_dir, exist_ok=True)
+        file_path = os.path.join(temp_dir, file.filename)
+        file.save(file_path)
+        
+        # Perform inference using the YOLO model
+        save_dir = os.path.join(os.getcwd(), "runs", "detect", "predict")
+        os.makedirs(save_dir, exist_ok=True)
+        results = yolo_model.predict(file_path, save=True, save_dir=save_dir)
+        
+        # Return the path to the saved annotated image
+        annotated_image_path = os.path.join(save_dir, file.filename)
+        return jsonify({'annotated_image_path': annotated_image_path})
+    except Exception as e:
+        logging.error(f"Error during detection: {e}")
+        return jsonify({'error': 'Detection failed'}), 500
 
 if __name__ == '__main__':
     app.run(debug=True)

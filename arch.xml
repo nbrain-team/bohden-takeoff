@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mxGraphModel dx="883" dy="777" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
+  <root>
+    <mxCell id="0" />
+    <mxCell id="1" parent="0" />
+    
+    <!-- Data Sources -->
+    <mxCell id="2" value="Data Sources" style="swimlane" vertex="1" parent="1">
+      <mxGeometry x="20" y="20" width="250" height="200" as="geometry" />
+    </mxCell>
+    <mxCell id="3" value="CCTV & Drones" vertex="1" parent="2">
+      <mxGeometry x="30" y="40" width="220" height="40" as="geometry" />
+    </mxCell>
+    <mxCell id="4" value="Blueprint Scans" vertex="1" parent="2">
+      <mxGeometry x="30" y="90" width="220" height="40" as="geometry" />
+    </mxCell>
+    <mxCell id="5" value="Supplier Database" vertex="1" parent="2">
+      <mxGeometry x="30" y="140" width="220" height="40" as="geometry" />
+    </mxCell>
+    
+    <!-- Processing Layer -->
+    <mxCell id="6" value="AI Processing" style="swimlane" vertex="1" parent="1">
+      <mxGeometry x="300" y="20" width="250" height="250" as="geometry" />
+    </mxCell>
+    <mxCell id="7" value="CV Models (PPE, Blueprint Validation)" vertex="1" parent="6">
+      <mxGeometry x="30" y="40" width="220" height="40" as="geometry" />
+    </mxCell>
+    <mxCell id="8" value="ML Algorithms (Risk, Delay Prediction)" vertex="1" parent="6">
+      <mxGeometry x="30" y="90" width="220" height="40" as="geometry" />
+    </mxCell>
+    <mxCell id="9" value="Optimization Engine (Supply Chain)" vertex="1" parent="6">
+      <mxGeometry x="30" y="140" width="220" height="40" as="geometry" />
+    </mxCell>
+    
+    <!-- Storage & Processing -->
+    <mxCell id="10" value="Storage & Servers" style="swimlane" vertex="1" parent="1">
+      <mxGeometry x="600" y="20" width="250" height="150" as="geometry" />
+    </mxCell>
+    <mxCell id="11" value="Cloud Database" vertex="1" parent="10">
+      <mxGeometry x="30" y="40" width="220" height="40" as="geometry" />
+    </mxCell>
+    <mxCell id="12" value="AI Model Server" vertex="1" parent="10">
+      <mxGeometry x="30" y="90" width="220" height="40" as="geometry" />
+    </mxCell>
+    
+    <!-- User Interfaces -->
+    <mxCell id="13" value="User Interfaces" style="swimlane" vertex="1" parent="1">
+      <mxGeometry x="300" y="300" width="550" height="150" as="geometry" />
+    </mxCell>
+    <mxCell id="14" value="Web Dashboard" vertex="1" parent="13">
+      <mxGeometry x="30" y="40" width="220" height="40" as="geometry" />
+    </mxCell>
+    <mxCell id="15" value="Mobile App" vertex="1" parent="13">
+      <mxGeometry x="280" y="40" width="220" height="40" as="geometry" />
+    </mxCell>
+    
+    <!-- Arrows -->
+    <mxCell id="16" edge="1" source="3" target="7" parent="1">
+      <mxGeometry relative="1" as="geometry" />
+    </mxCell>
+    <mxCell id="17" edge="1" source="4" target="7" parent="1">
+      <mxGeometry relative="1" as="geometry" />
+    </mxCell>
+    <mxCell id="18" edge="1" source="5" target="9" parent="1">
+      <mxGeometry relative="1" as="geometry" />
+    </mxCell>
+    <mxCell id="19" edge="1" source="7" target="11" parent="1">
+      <mxGeometry relative="1" as="geometry" />
+    </mxCell>
+    <mxCell id="20" edge="1" source="9" target="12" parent="1">
+      <mxGeometry relative="1" as="geometry" />
+    </mxCell>
+    <mxCell id="21" edge="1" source="11" target="14" parent="1">
+      <mxGeometry relative="1" as="geometry" />
+    </mxCell>
+    <mxCell id="22" edge="1" source="12" target="15" parent="1">
+      <mxGeometry relative="1" as="geometry" />
+    </mxCell>
+  </root>
+</mxGraphModel>
