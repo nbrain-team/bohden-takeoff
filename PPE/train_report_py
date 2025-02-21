@@ -1,0 +1,92 @@
+import pandas as pd
+import joblib
+import matplotlib.pyplot as plt
+import seaborn as sns
+from xgboost import XGBClassifier
+from fpdf import FPDF
+import os
+
+# Load training dataset
+df_train = pd.read_csv("construction_delay_india.csv")
+
+# Load trained model
+model_path = "best_xgb_model.json"
+if os.path.exists(model_path):
+    trained_model = XGBClassifier()
+    trained_model.load_model(model_path)
+    print("✅ Trained model loaded successfully.")
+else:
+    raise FileNotFoundError("❌ Model file not found. Train the model first.")
+
+# Preprocess data (Same as training process)
+df_train = pd.get_dummies(df_train, columns=["City", "Project Type", "External Factor", "Delay Reason"], drop_first=True)
+if "Milestone" in df_train.columns:
+    df_train["Milestone"] = pd.to_numeric(df_train["Milestone"], errors="coerce").fillna(0)
+
+# Define features
+X_train = df_train.drop(columns=["Delayed", "Project ID", "Start Date", "End Date"], errors="ignore")
+y_train = df_train["Delayed"]
+
+# Make predictions
+df_train["Predicted Delay"] = trained_model.predict(X_train)
+
+# Compute statistics
+average_delay = df_train.loc[df_train["Predicted Delay"] == 1, "Delay Duration (days)"].mean()
+delay_counts = df_train["Predicted Delay"].value_counts()
+feature_importance = trained_model.feature_importances_
+
+# Generate visualizations
+plt.figure(figsize=(8, 5))
+delay_counts.plot(kind='bar', color=['green', 'red'])
+plt.xticks(ticks=[0, 1], labels=['On-Time', 'Delayed'], rotation=0)
+plt.xlabel("Project Status")
+plt.ylabel("Number of Projects")
+plt.title("Delay Distribution in Training Data")
+plt.savefig("train_delay_distribution.png")
+plt.close()
+
+# Generate feature importance plot
+plt.figure(figsize=(10, 6))
+importance_series = pd.Series(feature_importance, index=X_train.columns).nlargest(10)
+importance_series.plot(kind='barh', color='blue')
+plt.xlabel("Importance Score")
+plt.title("Top 10 Feature Importances")
+plt.savefig("feature_importance.png")
+plt.close()
+
+# Generate PDF report
+pdf = FPDF()
+pdf.set_auto_page_break(auto=True, margin=15)
+pdf.add_page()
+pdf.set_font("Arial", "B", 16)
+pdf.cell(200, 10, "Training Data Delay Analysis Report", ln=True, align="C")
+pdf.ln(10)
+
+pdf.set_font("Arial", size=12)
+
+# Summary section
+pdf.cell(0, 10, "Summary of Predictions", ln=True, align="L")
+pdf.ln(5)
+pdf.cell(0, 10, f"Total Projects: {len(df_train)}", ln=True)
+pdf.cell(0, 10, f"Delayed Projects: {delay_counts.get(1, 0)}", ln=True)
+pdf.cell(0, 10, f"On-Time Projects: {delay_counts.get(0, 0)}", ln=True)
+pdf.cell(0, 10, f"Average Delay Duration: {average_delay:.2f} days", ln=True)
+pdf.ln(10)
+
+# Add Visualizations
+pdf.image("train_delay_distribution.png", x=10, w=180)
+pdf.ln(10)
+pdf.image("feature_importance.png", x=10, w=180)
+pdf.ln(10)
+
+# Detailed Report
+pdf.cell(0, 10, "Detailed Project Analysis", ln=True, align="L")
+pdf.ln(5)
+for i, row in df_train.iterrows():
+    pdf.cell(0, 10, f"Project ID: {row['Project ID']}", ln=True)
+    pdf.cell(0, 10, f"Predicted Delay: {'Yes' if row['Predicted Delay'] else 'No'}", ln=True)
+    pdf.cell(0, 10, f"Delay Duration (if delayed): {row.get('Delay Duration (days)', 'N/A')}", ln=True)
+    pdf.ln(5)
+
+pdf.output("train_data_report1.pdf")
+print("✅ PDF report generated: train_data_report.pdf")

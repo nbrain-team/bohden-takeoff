@@ -1,0 +1,51 @@
+Project ID,City,Project Type,Project Size (sq. m),Start Date,End Date,Labor Count,Equipment Count,Avg Temperature (°C),Rainfall (mm),Milestone,External Factor,Delay Reason
+PRJ-20001,Delhi,Metro,79456,2023-12-01,2025-06-01,243,39,38,119,5,None,Cement Unavailable
+PRJ-20002,Bangalore,Smart City,51875,2024-09-01,2026-03-01,127,43,23,128,1,Funding issues,Budget Cuts
+PRJ-20003,Kolkata,Commercial,92356,2025-09-01,2026-02-01,191,52,34,141,1,Material Shortage,Cement Unavailable
+PRJ-20004,Delhi,Bridge,69945,2023-05-01,2025-12-01,124,41,29,217,2,None,None
+PRJ-20005,Hyderabad,Railway,81898,2023-07-01,2026-10-01,352,88,26,88,3,Weather,Permit Delay
+PRJ-20006,Chandigarh,Railway,75420,2025-01-01,2026-08-01,480,64,22,127,5,Weather,Budget Cuts
+PRJ-20007,Bangalore,Commercial,65048,2025-03-01,2025-05-01,314,44,35,241,5,Material Shortage,Cement Unavailable
+PRJ-20008,Bangalore,Building,80488,2024-10-01,2025-04-01,369,73,23,107,3,Weather,Cement Unavailable
+PRJ-20009,Chandigarh,Metro,41251,2023-07-01,2024-11-01,447,74,40,70,1,Weather,None
+PRJ-20010,Ahmedabad,Highway,74062,2024-01-01,2026-03-01,210,79,25,73,2,Weather,Budget Cuts
+PRJ-20011,Ahmedabad,Smart City,71066,2024-02-01,2024-07-01,332,47,37,229,3,None,Permit Delay
+PRJ-20012,Hyderabad,Commercial,94237,2023-10-01,2026-01-01,368,92,34,50,1,Regulatory issues,Cement Unavailable
+PRJ-20013,Mumbai,Smart City,91761,2024-04-01,2025-04-01,120,66,38,134,5,Material Shortage,Budget Cuts
+PRJ-20014,Chennai,Bridge,46265,2023-02-01,2025-02-01,385,34,35,235,1,Funding issues,Rain
+PRJ-20015,Kolkata,Highway,35463,2023-01-01,2024-03-01,260,31,38,89,4,Funding issues,None
+PRJ-20016,Bangalore,Metro,88680,2023-09-01,2025-04-01,297,64,25,241,4,Material Shortage,None
+PRJ-20017,Pune,Commercial,56664,2024-03-01,2025-01-01,492,84,34,123,4,Weather,None
+PRJ-20018,Pune,Industrial,34554,2025-07-01,2026-09-01,320,57,29,118,1,Material Shortage,None
+PRJ-20019,Pune,Bridge,79105,2024-12-01,2025-12-01,448,81,35,154,2,Material Shortage,Permit Delay
+PRJ-20020,Jaipur,Commercial,50546,2024-05-01,2024-01-01,184,46,37,180,1,Funding issues,Budget Cuts
+PRJ-20021,Chennai,Metro,42645,2025-01-01,2025-08-01,243,87,25,232,3,Material Shortage,None
+PRJ-20022,Pune,Smart City,72540,2024-05-01,2026-10-01,124,88,21,214,2,Weather,Rain
+PRJ-20023,Kolkata,Commercial,89197,2023-10-01,2025-09-01,157,76,26,223,5,Material Shortage,None
+PRJ-20024,Jaipur,Smart City,99686,2023-03-01,2024-04-01,278,42,27,238,5,Material Shortage,Cement Unavailable
+PRJ-20025,Delhi,Building,55322,2025-07-01,2024-08-01,107,77,23,187,3,Weather,Permit Delay
+PRJ-20026,Pune,Industrial,95367,2025-08-01,2024-03-01,248,46,22,175,1,Funding issues,Rain
+PRJ-20027,Mumbai,Industrial,94269,2024-05-01,2026-09-01,496,37,24,131,3,Funding issues,Budget Cuts
+PRJ-20028,Bangalore,Building,76740,2024-05-01,2024-01-01,441,46,38,201,5,None,Rain
+PRJ-20029,Kolkata,Bridge,80330,2023-02-01,2024-01-01,328,62,29,118,1,Material Shortage,None
+PRJ-20030,Ahmedabad,Industrial,93751,2025-04-01,2026-09-01,466,78,36,233,5,None,Rain
+PRJ-20031,Ahmedabad,Highway,46608,2023-11-01,2026-05-01,463,48,31,194,1,Regulatory issues,Permit Delay
+PRJ-20032,Mumbai,Building,57788,2023-01-01,2026-03-01,132,66,25,94,4,Weather,Budget Cuts
+PRJ-20033,Pune,Commercial,32906,2025-07-01,2024-06-01,150,39,36,142,1,Material Shortage,None
+PRJ-20034,Ahmedabad,Railway,93916,2025-11-01,2026-07-01,435,86,27,204,5,Weather,Permit Delay
+PRJ-20035,Pune,Commercial,42810,2023-09-01,2026-10-01,482,34,21,85,2,Funding issues,None
+PRJ-20036,Bangalore,Building,87667,2025-07-01,2026-03-01,319,65,31,249,5,None,Rain
+PRJ-20037,Kolkata,Smart City,84018,2023-11-01,2025-08-01,402,47,28,234,2,Regulatory issues,None
+PRJ-20038,Mumbai,Railway,35234,2023-07-01,2024-02-01,341,77,29,78,2,Material Shortage,Rain
+PRJ-20039,Mumbai,Metro,52075,2025-01-01,2026-07-01,180,84,31,107,1,Funding issues,Budget Cuts
+PRJ-20040,Hyderabad,Smart City,42424,2024-02-01,2024-11-01,188,77,23,176,1,Weather,Permit Delay
+PRJ-20041,Delhi,Railway,83677,2024-10-01,2026-02-01,308,90,36,216,1,None,Budget Cuts
+PRJ-20042,Chennai,Industrial,73885,2023-08-01,2026-11-01,282,40,24,248,1,Material Shortage,Permit Delay
+PRJ-20043,Delhi,Building,41327,2023-02-01,2026-12-01,315,72,24,80,1,None,Budget Cuts
+PRJ-20044,Hyderabad,Bridge,43655,2025-08-01,2024-04-01,153,46,39,58,5,Regulatory issues,Cement Unavailable
+PRJ-20045,Pune,Railway,31431,2025-11-01,2024-05-01,121,85,37,70,4,Weather,Cement Unavailable
+PRJ-20046,Jaipur,Railway,88001,2025-07-01,2024-08-01,160,54,31,206,4,Weather,Budget Cuts
+PRJ-20047,Hyderabad,Railway,87015,2023-12-01,2024-06-01,448,76,37,136,3,Regulatory issues,None
+PRJ-20048,Delhi,Railway,60314,2024-07-01,2024-07-01,297,68,32,216,4,Regulatory issues,Rain
+PRJ-20049,Pune,Metro,31734,2024-02-01,2025-02-01,166,37,20,232,3,Weather,Cement Unavailable
+PRJ-20050,Chennai,Highway,71787,2025-06-01,2026-12-01,347,59,36,180,5,Regulatory issues,Cement Unavailable

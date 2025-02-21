@@ -1,0 +1,6 @@
+Project ID,City,Project Type,Project Size (sq. m),Start Date,End Date,Labor Count,Equipment Count,Avg Temperature (°C),Rainfall (mm),Milestone,External Factor,Delay Reason
+PRJ-20001,Pune,Metro,55000,2024-01-01,2024-12-31,220,60,31,90,2,Weather,Rain
+PRJ-20002,Kolkata,Highway,80000,2023-06-01,2024-06-01,320,85,29,180,4,None,None
+PRJ-20003,Chandigarh,Smart City,35000,2024-03-01,2025-03-01,140,35,26,60,3,Funding issues,Budget Cuts
+PRJ-20004,Ahmedabad,Building,47000,2024-07-01,2025-07-01,260,65,33,140,5,Material Shortage,Cement Unavailable
+PRJ-20005,Jaipur,Bridge,62000,2024-05-01,2025-05-01,190,50,30,85,1,None,None
