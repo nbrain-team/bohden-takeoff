@@ -78,7 +78,7 @@ def save_model(model, filename="model.pkl"):
   
 
 if __name__ == "__main__":
-    filepath = "C:/Users/Dell/Downloads/construction-optimisation/backend/train/construction_delay_india.csv"  # Update with your file path
+    filepath = "C:\\Users\\Dell\\Downloads\\construction-optimisation\\construction_delay_india.csv"  # Update with your file path
     X_train, X_test, y_train, y_test, encoders = load_and_preprocess_data(filepath)
 
     print("\n✅ Data preprocessing complete.")
