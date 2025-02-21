@@ -3,7 +3,7 @@ import os
 
 def infer_image(image_path):
     # Load the trained model
-    model = YOLO("best.pt")
+    model = YOLO("blueprint.pt")
 
     # Specify the directory to save the annotated images
     save_dir = os.path.join(os.getcwd(), "runs", "detect", "predict")
