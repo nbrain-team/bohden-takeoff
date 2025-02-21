@@ -15,7 +15,7 @@ logging.basicConfig(level=logging.DEBUG)
 # Load models
 cost_overrun_model = joblib.load('models/project_cost_overrun_model.pkl')
 scaler = joblib.load('models/scaler.pkl')
-yolo_model = YOLO("best.pt")  # YOLO model for object detection
+yolo_model = YOLO("blueprint.pt")  # YOLO model for object detection
 
 @app.route('/predict', methods=['POST'])
 def predict():
