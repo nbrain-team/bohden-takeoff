@@ -6,22 +6,72 @@ import tempfile
 import pandas as pd
 from ultralytics import YOLO
 from PIL import Image
+import together
+from together import Together
+from dotenv import load_dotenv
 
-# Load the trained metro risk classifier
+# Load environment variables
+load_dotenv()
+together.api_key = os.getenv("TOGETHER_API_KEY1")  # Set your Together AI API key
+
+# Load models and encoders
 METRO_MODEL_PATH = "../backend/metro/xgboost_metro_classifier.pkl"
 ENCODER_PATH = "../backend/metro/label_encoders.pkl"
+classifier = joblib.load(METRO_MODEL_PATH)
+regressor = joblib.load("../backend/metro/xgboost_metro_regressor.pkl")
+label_encoders = joblib.load(ENCODER_PATH)
+client = Together(api_key=together.api_key)
+# Define expected features (must match training data)
+expected_columns = [
+    "City", "Tunnel Length (km)", "Num of Stations", "Num of Workers", 
+    "Equipment Factor (%)", "Signal System Complexity (%)", "Material Factor (%)", 
+    "Gov Regulation Factor (%)", "Urban Congestion Impact (%)", 
+    "Expected Completion Time (months)", "Budget (in Crores)"
+]
+
+def generate_ai_explanation(risk_level, delay_days, input_data):
+    """Generates an AI-based explanation using Together AI (LLaMA 2-70B)"""
+    
+    prompt = f"""
+    A metro project has the following characteristics:
+    - City: {input_data['City'].values[0]}
+    - Tunnel Length: {input_data['Tunnel Length (km)'].values[0]} km
+    - Number of Stations: {input_data['Num of Stations'].values[0]}
+    - Number of Workers: {input_data['Num of Workers'].values[0]}
+    - Equipment Factor: {input_data['Equipment Factor (%)'].values[0]}%
+    - Signal System Complexity: {input_data['Signal System Complexity (%)'].values[0]}%
+    - Material Factor: {input_data['Material Factor (%)'].values[0]}%
+    - Government Regulation Factor: {input_data['Gov Regulation Factor (%)'].values[0]}%
+    - Urban Congestion Impact: {input_data['Urban Congestion Impact (%)'].values[0]}%
+    - Expected Completion Time: {input_data['Expected Completion Time (months)'].values[0]} months
+    - Budget: ₹{input_data['Budget (in Crores)'].values[0]} crores
+
+    The project has been classified as having a **{risk_level}** risk level and is expected to face a delay of **{delay_days:.2f}** days.
+
+    Explain the results in simple terms, highlighting the key factors contributing to the risk level and delay. Also, suggest mitigation strategies.
+    """
+
+    # Call Together AI with LLaMA 2-70B
+    response = client.chat.completions.create(
+        model="meta-llama/Llama-3.3-70B-Instruct-Turbo",
+        messages=[{"role": "user", "content": prompt}]
+    )
+    
+
+    # Debug: Print the raw API response
+    st.write(response.choices[0].message.content)
+
+    # Extract the generated text from the response
+    if "choices" in response and len(response["choices"]) > 0:
+        return response["choices"][0]["text"]
+    else:
+        return "❌ Error: Unable to generate an explanation. Please check the API response."
 
 # Load the supplier recommendation model & vectorizer
 SUPPLIER_MODEL_PATH = "../backend/train/supply_chain_nlp/supplier_recommendation_model.pkl"
 VECTORIZER_PATH = "../backend/train/supply_chain_nlp/vectorizer.pkl"
-
-# Load models and encoders
-metro_model = joblib.load(METRO_MODEL_PATH)
-label_encoders = joblib.load(ENCODER_PATH)
-
 supplier_model = joblib.load(SUPPLIER_MODEL_PATH)
 vectorizer = joblib.load(VECTORIZER_PATH)
-
 
 # Set up the Streamlit page
 st.set_page_config(page_title="BuildSmart", page_icon="🏗️", layout="wide")
@@ -31,7 +81,7 @@ st.title("🏗️ BuildSmart - Construction AI")
 st.sidebar.title("Navigation")
 menu = st.sidebar.radio(
     "Select a Page",
-    ["Dashboard", "Metro Risk Prediction", "Chatbot", "YOLO Detection", "Supply Chain Copilot","Risk Detection"],
+    ["Dashboard", "Metro Risk Prediction", "Chatbot", "YOLO Detection", "Supply Chain Copilot", "Risk Detection"],
     index=0
 )
 
@@ -100,9 +150,18 @@ elif menu == "Metro Risk Prediction":
                          "Gov Regulation Factor (%)", "Urban Congestion Impact (%)",
                          "Expected Completion Time (months)", "Budget (in Crores)"])
 
-            risk_prediction = metro_model.predict(input_data)[0]
+            # Predict risk level
+            risk_prediction = classifier.predict(input_data)[0]
             risk_label = label_encoders["Risk Level"].inverse_transform([risk_prediction])[0]
             st.success(f"✅ **Predicted Risk Level:** {risk_label}")
+
+            # Predict delay (if you have a regression model for delay)
+            delay_days = 45.23  # Replace with actual delay prediction if available
+
+            # Generate AI Explanation
+            st.subheader("🤖 AI Explanation")
+            explanation = generate_ai_explanation(risk_label, delay_days, input_data)
+            st.write(explanation)
 
 ### 🔍 SUPPLY CHAIN COPILOT ###
 elif menu == "Supply Chain Copilot":
@@ -149,6 +208,7 @@ elif menu == "Chatbot":
                     st.markdown(bot_response)
             else:
                 st.error("Chatbot failed to respond. Please try again.")
+
 ### 🔍 YOLO IMAGE DETECTION SECTION ###
 elif menu == "YOLO Detection":
     st.subheader("📸 Upload an Image for Safety Detection")
