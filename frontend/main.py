@@ -148,3 +148,38 @@ elif menu == "Chatbot":
                     st.markdown(bot_response)
             else:
                 st.error("Chatbot failed to respond. Please try again.")
+### 🔍 YOLO IMAGE DETECTION SECTION ###
+elif menu == "YOLO Detection":
+    st.subheader("📸 Upload an Image for Safety Detection")
+    
+    uploaded_file = st.file_uploader("Choose an image...", type=["jpg", "png", "jpeg"])
+    
+    if uploaded_file and st.button("🚀 Detect Safety Issues"):
+        with st.spinner("Running YOLO detection..."):
+            # Save uploaded file temporarily
+            temp_dir = tempfile.mkdtemp()
+            image_path = os.path.join(temp_dir, uploaded_file.name)
+            with open(image_path, "wb") as f:
+                f.write(uploaded_file.getbuffer())
+
+            # Load YOLO model and perform inference
+            model = YOLO("../backend/blueprint.pt")  # Ensure blueprint.pt exists
+            results = model.predict(image_path, save=True)
+
+            # Display results
+            if results:
+                st.success("✅ Detection completed! See detected objects below:")
+                
+                for result in results:
+                    st.image(Image.open(os.path.join(result.save_dir, uploaded_file.name)), caption="Annotated Image", use_column_width=True)
+
+                    # Show detected objects
+                    st.write("### 📌 Detected Objects:")
+                    for box in result.boxes:
+                        class_id = int(box.cls)
+                        class_name = result.names[class_id]
+                        confidence = float(box.conf)  # Convert tensor to float
+                        bbox = box.xyxy.tolist()  # Convert tensor to list
+                        st.write(f"🔹 *Class:* {class_name}, *Confidence:* {confidence:.2f}, *Bounding Box:* {bbox}")
+            else:
+                st.error("No objects detected. Try another image.")
