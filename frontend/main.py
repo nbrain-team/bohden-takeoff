@@ -106,7 +106,7 @@ st.markdown(
     <style>
     body {
         font-family: 'Arial', sans-serif;
-        background-color: #000000 !important;
+        background-color: white !important;
         color: #ffffff;
     }
     .block-container {
