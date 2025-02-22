@@ -19,4 +19,5 @@ transformers
 plotly
 fpdf
 xgboost
+asyncio
 
