@@ -132,6 +132,9 @@ if st.sidebar.button(":material/Local_Shipping: Supplier Recommendation", key="s
 if st.sidebar.button(":material/Warning: Risk Detection", key="risk_detection"):
     st.session_state.page = "Risk Detection"
 
+if st.sidebar.button(":material/Warning: Delay Report Generator", key="delay_report"):
+    st.session_state.page = "Delay Report Generator"
+
 # Home (Landing Page)
 if st.session_state.page == "Home":
     st.markdown('<div class="landing-container">', unsafe_allow_html=True)
@@ -588,5 +591,113 @@ elif st.session_state.page == "Risk Detection":
 
         cap.release()
         cv2.destroyAllWindows()
+ 
+
+elif st.session_state.page == "Delay Report Generator":
+
+    from fpdf import FPDF
+    from PIL import Image
+    import matplotlib.pyplot as plt
+    from xgboost import XGBClassifier
+
+       # Streamlit page title
+    st.title("🏗️ Construction Delay Prediction System")
+
+    # File uploader for dataset
+    uploaded_file = st.file_uploader("Upload your construction project dataset (CSV)", type=["csv"])
+
+    # Image uploader (optional)
+    uploaded_image = st.file_uploader("Upload an image (optional)", type=["png", "jpg", "jpeg"])
+
+    # Load trained model
+    model_path2 = "../backend/PPE/best_xgb_model.json"
+    train_columns_path2 = "../backend/PPE/train_columns.pkl"
+
+    if os.path.exists(model_path2) and os.path.exists(train_columns_path2):
+        loaded_model = XGBClassifier()
+        loaded_model.load_model(model_path2)
+        train_columns = joblib.load(train_columns_path2)
+        st.success("✅ Model loaded successfully.")
+    else:
+        st.error("❌ Model or training columns file not found. Please check the paths.")
+        st.stop()
+
+    if uploaded_file:
+        df_test = pd.read_csv(uploaded_file)
+
+        # Preprocessing
+        df_test = pd.get_dummies(df_test, columns=["City", "Project Type", "External Factor", "Delay Reason"], drop_first=True)
+        if "Milestone" in df_test.columns:
+            df_test["Milestone"] = pd.to_numeric(df_test["Milestone"], errors="coerce").fillna(0)
+
+        # Ensure consistency with training columns
+        for col in train_columns:
+            if col not in df_test.columns:
+                df_test[col] = 0  # Add missing columns
+
+        df_test = df_test.reindex(columns=train_columns, fill_value=0)
+
+        # Make predictions
+        y_pred = loaded_model.predict(df_test)
+        df_test["Predicted Delay"] = y_pred
+
+        # Display results
+        st.write("### 📊 Prediction Results")
+        st.dataframe(df_test.head())
+
+        # Save predictions
+        df_test.to_csv("predicted_report.csv", index=False)
+        st.success("✅ Predictions saved as CSV.")
+        st.download_button("📥 Download Predictions CSV", data=open("predicted_report.csv", "rb"), file_name="predicted_report.csv", mime="text/csv")
+
+        # Ensure "Delay Duration (days)" exists
+        average_delay = df_test["Delay Duration (days)"].mean() if "Delay Duration (days)" in df_test.columns else "N/A"
+
+        # Delay distribution visualization
+        plt.figure(figsize=(8, 5))
+        df_test["Predicted Delay"].value_counts().plot(kind='bar', color=['green', 'red'])
+        plt.xticks(ticks=[0, 1], labels=['On-Time', 'Delayed'], rotation=0)
+        plt.xlabel("Project Status")
+        plt.ylabel("Number of Projects")
+        plt.title("Construction Delay Distribution")
+        plt.savefig("delay_distribution.png")
+        st.image("delay_distribution.png")
+
+        # Generate PDF button
+        if st.button("📄 Generate PDF Report"):
+            pdf = FPDF()
+            pdf.set_auto_page_break(auto=True, margin=15)
+            pdf.add_page()
+            pdf.set_font("Arial", "B", 16)
+            pdf.cell(200, 10, "Construction Delay Prediction Report", ln=True, align="C")
+            pdf.ln(10)
+
+            pdf.set_font("Arial", size=12)
+            pdf.cell(0, 10, f"Total Projects: {len(df_test)}", ln=True)
+            pdf.cell(0, 10, f"Delayed Projects: {df_test['Predicted Delay'].sum()}", ln=True)
+            pdf.cell(0, 10, f"On-Time Projects: {len(df_test) - df_test['Predicted Delay'].sum()}", ln=True)
+            pdf.cell(0, 10, f"Average Delay Duration: {average_delay if average_delay != 'N/A' else 'N/A'} days", ln=True)
+            pdf.ln(10)
+
+            pdf.image("delay_distribution.png", x=10, w=180)
+
+            # If user uploaded an image, add it to the PDF
+            if uploaded_image:
+                image_path = "uploaded_image.png"
+                with open(image_path, "wb") as f:
+                    f.write(uploaded_image.getbuffer())  # Save image
+                pdf.add_page()
+                pdf.cell(200, 10, "User Uploaded Image", ln=True, align="C")
+                pdf.image(image_path, x=10, w=180)
+                st.image(uploaded_image, caption="Uploaded Image", use_column_width=True)
+
+            pdf.output("predicted_report.pdf")
+
+            st.success("✅ PDF report generated.")
+            with open("predicted_report.pdf", "rb") as f:
+                st.download_button("📥 Download Report PDF", f, file_name="predicted_report.pdf", mime="application/pdf")
+
+
+       
 
 
