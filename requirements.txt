@@ -18,3 +18,5 @@ torchvision
 transformers
 plotly
 fpdf
+xgboost
+
