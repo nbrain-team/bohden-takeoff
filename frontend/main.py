@@ -11,6 +11,10 @@ from together import Together
 from dotenv import load_dotenv
 import uuid
 import time
+from main_css import apply_custom_css  # Import the custom CSS function
+
+# Set up the Streamlit page
+st.set_page_config(page_title="BuildSmart", page_icon="🏗️", layout="wide")
 
 # Load environment variables
 load_dotenv()
@@ -96,122 +100,36 @@ VECTORIZER_PATH = "../backend/train/supply_chain_nlp/vectorizer.pkl"
 supplier_model = joblib.load(SUPPLIER_MODEL_PATH)
 vectorizer = joblib.load(VECTORIZER_PATH)
 
-# Set up the Streamlit page
-st.set_page_config(page_title="BuildSmart", page_icon="🏗️", layout="wide")
+# Apply custom CSS
+st.markdown(apply_custom_css(), unsafe_allow_html=True)
+
 st.title("🏗️ BuildSmart - Construction AI")
 
-# Custom CSS for UI enhancement
-st.markdown(
-    """
-    <style>
-    body {
-        font-family: 'Arial', sans-serif;
-        background-color: white !important;
-        color: #ffffff;
-    }
-    .block-container {
-            padding-top: 35px !important;
-            
-        }
-    .main-title {
-        text-align: center;
-        font-size: 36px;
-        font-weight: bold;
-        color: #FFD700; /* Yellow */
-    }
-    .landing-container {
-        text-align: center;
-        margin-top: 50px;
-    }
-    .landing-button {
-        font-size: 20px;
-        padding: 12px 25px;
-        background-color: #FFD700; /* Yellow */
-        color: #000000;
-        border: none;
-        border-radius: 8px;
-        cursor: pointer;
-        transition: 0.3s;
-    }
-    .landing-button:hover {
-        background-color: #FFC107; /* Slightly darker yellow */
-    }
-    </style>
-    """,
-    unsafe_allow_html=True
-)
-
-st.sidebar.markdown(
-    """
-    <style>
-        [data-testid="stSidebar"] {
-            padding-top: 35px !important; 
-            background-color: #f1c232 !important; /* Sidebar background */
-            width: 200px !important;
-            min-width: 200px !important;
-            max-width: 200px !important;
-        }
-        /* Sidebar Title */
-        [data-testid="stSidebar"] h1, 
-        [data-testid="stSidebar"] h2, 
-        [data-testid="stSidebar"] h3 {
-            color: black !important; /* Title remains black */
-            text-align: center;
-        }
-        [data-testid="stSidebar"] hr {
-            border-top: 2px solid black !important; /* Makes the separator black */
-        }
-        /* Sidebar Items */
-        .sidebar-item {
-            font-size: 18px;
-            padding: 12px 15px;
-            background-color: #333333 !important; /* Dark grey button */
-            color: white !important; /* White text */
-            border-radius: 8px;
-            text-align: center;
-            margin: 8px 0;
-            cursor: pointer;
-            transition: 0.3s;
-            font-weight: 500;
-        }
-        .sidebar-item:hover {
-            background-color: #444444 !important; /* Slightly lighter grey on hover */
-        }
-    </style>
-    """,
-    unsafe_allow_html=True
-)
 
 if "page" not in st.session_state:
     st.session_state.page = "Home" # Default page
-# Sidebar Buttons
-if st.sidebar.button("🏠 Home"):
+
+# Sidebar Buttons with Streamlit's st.button and icons
+if st.sidebar.button(":material/Home: Home", key="home"):
     st.session_state.page = "Home"
 
-if st.sidebar.button("📊 Dashboard"):
+if st.sidebar.button(":material/Dashboard: Dashboard", key="dashboard"):
     st.session_state.page = "Dashboard"
 
-st.sidebar.markdown("---")  # Separator
-
-if st.sidebar.button("🚇 Metro Risk Prediction"):
+if st.sidebar.button(":material/Train: Metro Risk Prediction", key="metro_risk"):
     st.session_state.page = "Metro Risk Prediction"
 
-
-
-if st.sidebar.button("💬 Chatbot"):
+if st.sidebar.button(":material/Chat: Chatbot", key="chatbot"):
     st.session_state.page = "Chatbot"
 
-if st.sidebar.button("📐 Blueprint Detection"):
+if st.sidebar.button(":material/Square_Foot: Blueprint Detection and Analysis", key="blueprint"):
     st.session_state.page = "Blueprint Detection and Analysis"
 
-if st.sidebar.button("🔗 Supply Chain Copilot"):
+if st.sidebar.button(":material/Local_Shipping: Supply Chain Copilot", key="supply_chain"):
     st.session_state.page = "Supply Chain Copilot"
 
-if st.sidebar.button("⚠️ Risk Detection"):
+if st.sidebar.button(":material/Warning: Risk Detection", key="risk_detection"):
     st.session_state.page = "Risk Detection"
-
-# # Display Selected Page
-# st.write(f"### {st.session_state.page} Page Content")
 
 # Home (Landing Page)
 if st.session_state.page == "Home":
