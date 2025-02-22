@@ -69,6 +69,27 @@ def generate_ai_explanation(risk_level, delay_days, input_data):
     # else:
     #     return "❌ Error: Unable to generate an explanation. Please check the API response."
 
+def generate_detection_explanation(detected_objects, detection_type):
+    """Generates an AI-based explanation for detected objects using Together AI (LLaMA 2-70B)"""
+    
+    prompt = f"Explain the following detected objects in simple terms for {detection_type}:\n\n"
+    for obj in detected_objects:
+        prompt += f"- Class: {obj['class_name']}, Confidence: {obj['confidence']:.2f}, Bounding Box: {obj['bbox']}\n"
+
+    if detection_type == "Blueprint Detection":
+        prompt += "\n Basically purpose of Blueprint detection is to help builders save time, cost and delays which happen due to problems in the blueprint itself. Explain what each term means, why it is important, and how it relates to blueprint analysis. Find faults in the blueprint based on the detection  or appreciate if something is right. Also, suggest any necessary actions or precautions."
+    elif detection_type == "Risk Detection":
+        prompt += "\nExplain what each term means, why it is important, and what exactly are the risks in the image. Also, suggest any necessary actions or precautions."
+
+    # Call Together AI with LLaMA 2-70B
+    response = client.chat.completions.create(
+        model="meta-llama/Llama-3.3-70B-Instruct-Turbo",
+        messages=[{"role": "user", "content": prompt}]
+    )
+
+    # Extract the generated text from the response
+    return response.choices[0].message.content
+
 # Load the supplier recommendation model & vectorizer
 SUPPLIER_MODEL_PATH = "../backend/train/supply_chain_nlp/supplier_recommendation_model.pkl"
 VECTORIZER_PATH = "../backend/train/supply_chain_nlp/vectorizer.pkl"
@@ -262,21 +283,28 @@ elif menu == "Blueprint Detection and Analysis":
 
                         # Show detected objects
                         st.write("### 📌 Detected Objects:")
+                        detected_objects = []
                         for result in results:
                             for box in result.boxes:
                                 class_id = int(box.cls)
                                 class_name = result.names[class_id]
                                 confidence = float(box.conf)
                                 bbox = box.xyxy.tolist()
+                                detected_objects.append({
+                                    "class_name": class_name,
+                                    "confidence": confidence,
+                                    "bbox": bbox
+                                })
                                 st.write(f"🔹 *Class:* {class_name}, *Confidence:* {confidence:.2f}, *Bounding Box:* {bbox}")
+
+                        # Generate AI Explanation for detected objects
+                        st.subheader("🤖 AI Explanation for Detected Objects")
+                        explanation = generate_detection_explanation(detected_objects, "Blueprint Detection")
+                        st.write(explanation)
                     else:
                         st.error("Error: Could not find the saved prediction image.")
                 else:
                     st.error("⚠️ No objects detected. Try another image.")
-
-
-
-
 
 ### 🔍 YOLO IMAGE DETECTION SECTION ###
 elif menu == "Risk Detection":
@@ -329,13 +357,24 @@ elif menu == "Risk Detection":
 
                         # Show detected objects
                         st.write("### 📌 Detected Objects:")
+                        detected_objects = []
                         for result in results:
                             for box in result.boxes:
                                 class_id = int(box.cls)
                                 class_name = result.names[class_id]
                                 confidence = float(box.conf)
                                 bbox = box.xyxy.tolist()
+                                detected_objects.append({
+                                    "class_name": class_name,
+                                    "confidence": confidence,
+                                    "bbox": bbox
+                                })
                                 st.write(f"🔹 *Class:* {class_name}, *Confidence:* {confidence:.2f}, *Bounding Box:* {bbox}")
+
+                        # Generate AI Explanation for detected objects
+                        st.subheader("🤖 AI Explanation for Detected Objects")
+                        explanation = generate_detection_explanation(detected_objects, "Risk Detection")
+                        st.write(explanation)
                     else:
                         st.error("Error: Could not find the saved prediction image.")
                 else:
