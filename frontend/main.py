@@ -100,16 +100,130 @@ vectorizer = joblib.load(VECTORIZER_PATH)
 st.set_page_config(page_title="BuildSmart", page_icon="🏗️", layout="wide")
 st.title("🏗️ BuildSmart - Construction AI")
 
-# Sidebar for Navigation
-st.sidebar.title("Navigation")
-menu = st.sidebar.radio(
-    "Select a Page",
-    ["Dashboard", "Metro Risk Prediction", "Chatbot", "Blueprint Detection and Analysis", "Supply Chain Copilot", "Risk Detection"],
-    index=0
+# Custom CSS for UI enhancement
+st.markdown(
+    """
+    <style>
+    body {
+        font-family: 'Arial', sans-serif;
+        background-color: #000000 !important;
+        color: #ffffff;
+    }
+    .block-container {
+            padding-top: 35px !important;
+            
+        }
+    .main-title {
+        text-align: center;
+        font-size: 36px;
+        font-weight: bold;
+        color: #FFD700; /* Yellow */
+    }
+    .landing-container {
+        text-align: center;
+        margin-top: 50px;
+    }
+    .landing-button {
+        font-size: 20px;
+        padding: 12px 25px;
+        background-color: #FFD700; /* Yellow */
+        color: #000000;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+        transition: 0.3s;
+    }
+    .landing-button:hover {
+        background-color: #FFC107; /* Slightly darker yellow */
+    }
+    </style>
+    """,
+    unsafe_allow_html=True
 )
 
+st.sidebar.markdown(
+    """
+    <style>
+        [data-testid="stSidebar"] {
+            padding-top: 35px !important; 
+            background-color: #f1c232 !important; /* Sidebar background */
+            width: 200px !important;
+            min-width: 200px !important;
+            max-width: 200px !important;
+        }
+        /* Sidebar Title */
+        [data-testid="stSidebar"] h1, 
+        [data-testid="stSidebar"] h2, 
+        [data-testid="stSidebar"] h3 {
+            color: black !important; /* Title remains black */
+            text-align: center;
+        }
+        [data-testid="stSidebar"] hr {
+            border-top: 2px solid black !important; /* Makes the separator black */
+        }
+        /* Sidebar Items */
+        .sidebar-item {
+            font-size: 18px;
+            padding: 12px 15px;
+            background-color: #333333 !important; /* Dark grey button */
+            color: white !important; /* White text */
+            border-radius: 8px;
+            text-align: center;
+            margin: 8px 0;
+            cursor: pointer;
+            transition: 0.3s;
+            font-weight: 500;
+        }
+        .sidebar-item:hover {
+            background-color: #444444 !important; /* Slightly lighter grey on hover */
+        }
+    </style>
+    """,
+    unsafe_allow_html=True
+)
+
+if "page" not in st.session_state:
+    st.session_state.page = "Home" # Default page
+# Sidebar Buttons
+if st.sidebar.button("🏠 Home"):
+    st.session_state.page = "Home"
+
+if st.sidebar.button("📊 Dashboard"):
+    st.session_state.page = "Dashboard"
+
+st.sidebar.markdown("---")  # Separator
+
+if st.sidebar.button("🚇 Metro Risk Prediction"):
+    st.session_state.page = "Metro Risk Prediction"
+
+
+
+if st.sidebar.button("💬 Chatbot"):
+    st.session_state.page = "Chatbot"
+
+if st.sidebar.button("📐 Blueprint Detection"):
+    st.session_state.page = "Blueprint Detection and Analysis"
+
+if st.sidebar.button("🔗 Supply Chain Copilot"):
+    st.session_state.page = "Supply Chain Copilot"
+
+if st.sidebar.button("⚠️ Risk Detection"):
+    st.session_state.page = "Risk Detection"
+
+# # Display Selected Page
+# st.write(f"### {st.session_state.page} Page Content")
+
+# Home (Landing Page)
+if st.session_state.page == "Home":
+    st.markdown('<div class="landing-container">', unsafe_allow_html=True)
+    st.image("https://source.unsplash.com/1600x600/?construction,building", use_container_width=True)
+    st.markdown('<h1 class="main-title">🏗️ BuildSmart - AI for Smarter Construction</h1>', unsafe_allow_html=True)
+    st.write("🚀 AI-powered solutions for project risk assessment, cost optimization, and safety monitoring.")
+    st.markdown('<a href="?page=dashboard"><button class="landing-button">Get Started</button></a>', unsafe_allow_html=True)
+    st.markdown("</div>", unsafe_allow_html=True)
+
 ### 🏗️ DASHBOARD SECTION ###
-if menu == "Dashboard":
+elif st.session_state.page == "Dashboard":
     st.subheader("📊 Project Cost Overrun Prediction & Safety Analysis")
 
     with st.expander("🔍 Predict Cost Overrun"):
@@ -142,7 +256,7 @@ if menu == "Dashboard":
                     st.error("Failed to get a prediction. Please try again.")
 
 ### 🚆 METRO RISK PREDICTION SECTION ###
-elif menu == "Metro Risk Prediction":
+elif st.session_state.page == "Metro Risk Prediction":
     st.subheader("🚆 Metro Project Risk Level Prediction")
 
     with st.form("metro_risk_form"):
@@ -187,7 +301,7 @@ elif menu == "Metro Risk Prediction":
             st.write(explanation)
 
 ### 🔍 SUPPLY CHAIN COPILOT ###
-elif menu == "Supply Chain Copilot":
+elif st.session_state.page == "Supply Chain Copilot":
     st.subheader("🔗 Construction Supplier Copilot")
 
     query = st.text_input("Enter Material Type or Supplier Need (e.g., 'Steel Supplier in Mumbai')")
@@ -206,7 +320,7 @@ elif menu == "Supply Chain Copilot":
                 st.write("---")
 
 ### 🤖 AI CHATBOT SECTION ###
-elif menu == "Chatbot":
+elif st.session_state.page == "Chatbot":
     st.subheader("🤖 AI Construction Chatbot")
     st.write("💬 Ask anything about construction risks, safety, and cost optimization!")
 
@@ -233,7 +347,7 @@ elif menu == "Chatbot":
                 st.error("Chatbot failed to respond. Please try again.")
 
 ### 🔍 YOLO IMAGE DETECTION SECTION ###
-elif menu == "Blueprint Detection and Analysis":
+elif st.session_state.page == "Blueprint Detection and Analysis":
     st.subheader("📸 Upload an Image for Blueprint Detection")
 
     uploaded_file = st.file_uploader("Choose an image...", type=["jpg", "png", "jpeg"])
@@ -243,7 +357,7 @@ elif menu == "Blueprint Detection and Analysis":
     os.makedirs(predict_folder, exist_ok=True)  # Ensure the folder exists
 
     if uploaded_file:
-        st.image(uploaded_file, caption="Uploaded Image", use_column_width=True)
+        st.image(uploaded_file, caption="Uploaded Image", use_container_width=True)
 
         if st.button("🚀 Detect Blueprint"):
             with st.spinner("Running detection..."):
@@ -279,7 +393,7 @@ elif menu == "Blueprint Detection and Analysis":
                         os.rename(old_image_path, new_image_path)  # Move and rename file
 
                         # Display annotated image
-                        st.image(Image.open(new_image_path), caption="Annotated Image", use_column_width=True)
+                        st.image(Image.open(new_image_path), caption="Annotated Image", use_container_width=True)
 
                         # Show detected objects
                         st.write("### 📌 Detected Objects:")
@@ -307,7 +421,7 @@ elif menu == "Blueprint Detection and Analysis":
                     st.error("⚠️ No objects detected. Try another image.")
 
 ### 🔍 YOLO IMAGE DETECTION SECTION ###
-elif menu == "Risk Detection":
+elif st.session_state.page == "Risk Detection":
     st.subheader("📸 Upload a Construction Site Image for Risk Detection")
 
     uploaded_file = st.file_uploader("Choose an image...", type=["jpg", "png", "jpeg"])
@@ -317,7 +431,7 @@ elif menu == "Risk Detection":
     os.makedirs(predict_folder, exist_ok=True)  # Ensure the folder exists
 
     if uploaded_file:
-        st.image(uploaded_file, caption="Uploaded Image", use_column_width=True)
+        st.image(uploaded_file, caption="Uploaded Image", use_container_width=True)
 
         if st.button("🚀 Detect Risk"):
             with st.spinner("Running detection..."):
@@ -353,7 +467,7 @@ elif menu == "Risk Detection":
                         os.rename(old_image_path, new_image_path)  # Move and rename file
 
                         # Display annotated image
-                        st.image(Image.open(new_image_path), caption="Annotated Image", use_column_width=True)
+                        st.image(Image.open(new_image_path), caption="Annotated Image", use_container_width=True)
 
                         # Show detected objects
                         st.write("### 📌 Detected Objects:")
