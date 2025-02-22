@@ -412,4 +412,58 @@ elif st.session_state.page == "Risk Detection":
                 else:
                     st.error("⚠️ No objects detected. Try another image.")
 
+    st.subheader("📹 Real-Time Risk Detection using Webcam")
+
+    if "camera_active" not in st.session_state:
+        st.session_state.camera_active = False
+
+    col1, col2 = st.columns(2)
+
+    with col1:
+        if st.button("Start Webcam Detection"):
+            st.session_state.camera_active = True
+
+    with col2:
+        if st.button("Stop Webcam Detection"):
+            st.session_state.camera_active = False
+
+    if st.session_state.camera_active:
+        import os
+        import cv2
+        from ultralytics import YOLO
+
+        # Load trained YOLOv8 model
+        model = YOLO("../backend/PPE/models/best_2.pt")  # Correct path to the trained model
+
+        cap = cv2.VideoCapture(0)  # Open webcam
+
+        frame_placeholder = st.empty()
+
+        while cap.isOpened() and st.session_state.camera_active:
+            ret, frame = cap.read()
+            if not ret:
+                break
+
+            # Run YOLO model on GPU
+            results = model(frame, device=0)  # Use GPU
+
+            # Draw bounding boxes and labels
+            for r in results:
+                for box in r.boxes:
+                    x1, y1, x2, y2 = map(int, box.xyxy[0])
+                    label = box.cls[0]
+                    confidence = box.conf[0]
+                    label_text = f"{model.names[int(label)]}: {confidence:.2f}"
+                    cv2.rectangle(frame, (x1, y1), (x2, y2), (0, 255, 0), 2)
+                    cv2.putText(frame, label_text, (x1, y1 - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 0), 2)
+
+            # Convert the frame to RGB format
+            frame_rgb = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+
+            # Display the frame in Streamlit
+            frame_placeholder.image(frame_rgb, channels="RGB")
+
+        cap.release()
+        cv2.destroyAllWindows()
+
 
