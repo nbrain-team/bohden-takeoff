@@ -11,6 +11,8 @@ import tempfile
 import cv2  # Add this import for webcam functionality
 import torch
 from ultralytics import YOLO
+import plotly.express as px
+import plotly.graph_objects as go
 import requests
 import uuid
 import time
@@ -29,8 +31,6 @@ def dashboard_page():
     with st.expander("🔍 Predict Cost Overrun"):
         col1, col2 = st.columns(2)
         with col1:
-            project_size = st.number_input("Project Size (sq. m)", min_value=0)
-            labor_count = st.number_input("Labor Count", min_value=0)
             equipment_count = st.number_input("Equipment Count", min_value=0)
         with col2:
             avg_temp = st.number_input("Avg Temperature (°C)", min_value=-50, max_value=50)
