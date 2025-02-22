@@ -9,6 +9,8 @@ from PIL import Image
 import together
 from together import Together
 from dotenv import load_dotenv
+import uuid
+import time
 
 # Load environment variables
 load_dotenv()
@@ -62,10 +64,10 @@ def generate_ai_explanation(risk_level, delay_days, input_data):
     st.write(response.choices[0].message.content)
 
     # Extract the generated text from the response
-    if "choices" in response and len(response["choices"]) > 0:
-        return response["choices"][0]["text"]
-    else:
-        return "❌ Error: Unable to generate an explanation. Please check the API response."
+    # if "choices" in response and len(response["choices"]) > 0:
+    #     return response["choices"][0]["text"]
+    # else:
+    #     return "❌ Error: Unable to generate an explanation. Please check the API response."
 
 # Load the supplier recommendation model & vectorizer
 SUPPLIER_MODEL_PATH = "../backend/train/supply_chain_nlp/supplier_recommendation_model.pkl"
@@ -81,7 +83,7 @@ st.title("🏗️ BuildSmart - Construction AI")
 st.sidebar.title("Navigation")
 menu = st.sidebar.radio(
     "Select a Page",
-    ["Dashboard", "Metro Risk Prediction", "Chatbot", "YOLO Detection", "Supply Chain Copilot", "Risk Detection"],
+    ["Dashboard", "Metro Risk Prediction", "Chatbot", "Blueprint Detection and Analysis", "Supply Chain Copilot", "Risk Detection"],
     index=0
 )
 
@@ -210,73 +212,133 @@ elif menu == "Chatbot":
                 st.error("Chatbot failed to respond. Please try again.")
 
 ### 🔍 YOLO IMAGE DETECTION SECTION ###
-elif menu == "YOLO Detection":
-    st.subheader("📸 Upload an Image for Safety Detection")
-    
+elif menu == "Blueprint Detection and Analysis":
+    st.subheader("📸 Upload an Image for Blueprint Detection")
+
     uploaded_file = st.file_uploader("Choose an image...", type=["jpg", "png", "jpeg"])
-    
-    if uploaded_file and st.button("🚀 Detect Safety Issues"):
-        with st.spinner("Running YOLO detection..."):
-            # Save uploaded file temporarily
-            temp_dir = tempfile.mkdtemp()
-            image_path = os.path.join(temp_dir, uploaded_file.name)
-            with open(image_path, "wb") as f:
-                f.write(uploaded_file.getbuffer())
 
-            # Load YOLO model and perform inference
-            model = YOLO("../backend/blueprint.pt")  # Ensure blueprint.pt exists
-            results = model.predict(image_path, save=True)
+    # Define a fixed prediction folder
+    predict_folder = "runs/detect/predictBlueprint"
+    os.makedirs(predict_folder, exist_ok=True)  # Ensure the folder exists
 
-            # Display results
-            if results:
-                st.success("✅ Detection completed! See detected objects below:")
-                
-                for result in results:
-                    st.image(Image.open(os.path.join(result.save_dir, uploaded_file.name)), caption="Annotated Image", use_column_width=True)
+    if uploaded_file:
+        st.image(uploaded_file, caption="Uploaded Image", use_column_width=True)
 
-                    # Show detected objects
-                    st.write("### 📌 Detected Objects:")
-                    for box in result.boxes:
-                        class_id = int(box.cls)
-                        class_name = result.names[class_id]
-                        confidence = float(box.conf)  # Convert tensor to float
-                        bbox = box.xyxy.tolist()  # Convert tensor to list
-                        st.write(f"🔹 *Class:* {class_name}, *Confidence:* {confidence:.2f}, *Bounding Box:* {bbox}")
-            else:
-                st.error("No objects detected. Try another image.")
+        if st.button("🚀 Detect Blueprint"):
+            with st.spinner("Running detection..."):
+                # Save uploaded file temporarily
+                temp_dir = tempfile.mkdtemp()
+                image_path = os.path.join(temp_dir, uploaded_file.name)
+                with open(image_path, "wb") as f:
+                    f.write(uploaded_file.getbuffer())
+
+                # Generate a unique name for the output image
+                unique_id = uuid.uuid4().hex[:8]  # Short UUID
+                timestamp = int(time.time())  # Timestamp
+                new_image_name = f"BuildSmart_detected_blueprint_{unique_id}.png"  # Unique image name
+                new_image_path = os.path.join(predict_folder, new_image_name)
+
+                # Load YOLO model and perform inference
+                model = YOLO("../backend/blueprint.pt")
+                results = model.predict(image_path, save=True)  # Save images in default location
+
+                # Find the latest prediction folder
+                saved_images = sorted(
+                    [f for f in os.listdir("runs/detect") if f.startswith("predict")], 
+                    key=lambda x: os.path.getctime(os.path.join("runs/detect", x)), 
+                    reverse=True
+                )
+
+                if saved_images:
+                    latest_predict_folder = os.path.join("runs/detect", saved_images[0])
+                    detected_images = [f for f in os.listdir(latest_predict_folder) if f.endswith((".png", ".jpg", ".jpeg"))]
+
+                    if detected_images:
+                        old_image_path = os.path.join(latest_predict_folder, detected_images[0])
+                        os.rename(old_image_path, new_image_path)  # Move and rename file
+
+                        # Display annotated image
+                        st.image(Image.open(new_image_path), caption="Annotated Image", use_column_width=True)
+
+                        # Show detected objects
+                        st.write("### 📌 Detected Objects:")
+                        for result in results:
+                            for box in result.boxes:
+                                class_id = int(box.cls)
+                                class_name = result.names[class_id]
+                                confidence = float(box.conf)
+                                bbox = box.xyxy.tolist()
+                                st.write(f"🔹 *Class:* {class_name}, *Confidence:* {confidence:.2f}, *Bounding Box:* {bbox}")
+                    else:
+                        st.error("Error: Could not find the saved prediction image.")
+                else:
+                    st.error("⚠️ No objects detected. Try another image.")
+
+
+
+
 
 ### 🔍 YOLO IMAGE DETECTION SECTION ###
 elif menu == "Risk Detection":
-    st.subheader("📸 Upload an Image for Safety Detection")
-    
+    st.subheader("📸 Upload a Construction Site Image for Risk Detection")
+
     uploaded_file = st.file_uploader("Choose an image...", type=["jpg", "png", "jpeg"])
-    
-    if uploaded_file and st.button("🚀 Perform Safety Analysis"):
-        with st.spinner("Running YOLO detection..."):
-            # Save uploaded file temporarily
-            temp_dir = tempfile.mkdtemp()
-            image_path = os.path.join(temp_dir, uploaded_file.name)
-            with open(image_path, "wb") as f:
-                f.write(uploaded_file.getbuffer())
 
-            # Load YOLO model and perform inference
-            model = YOLO("../backend/PPE/models/best_2.pt")  # Ensure blueprint.pt exists
-            results = model.predict(image_path, save=True)
+    # Define a fixed prediction folder
+    predict_folder = "runs/detect/predictRisk"
+    os.makedirs(predict_folder, exist_ok=True)  # Ensure the folder exists
 
-            # Display results
-            if results:
-                st.success("✅ Detection completed! See detected objects below:")
-                
-                for result in results:
-                    st.image(Image.open(os.path.join(result.save_dir, uploaded_file.name)), caption="Annotated Image", use_column_width=True)
+    if uploaded_file:
+        st.image(uploaded_file, caption="Uploaded Image", use_column_width=True)
 
-                    # Show detected objects
-                    st.write("### 📌 Detected Objects:")
-                    for box in result.boxes:
-                        class_id = int(box.cls)
-                        class_name = result.names[class_id]
-                        confidence = float(box.conf)  # Convert tensor to float
-                        bbox = box.xyxy.tolist()  # Convert tensor to list
-                        st.write(f"🔹 *Class:* {class_name}, *Confidence:* {confidence:.2f}, *Bounding Box:* {bbox}")
-            else:
-                st.error("No objects detected. Try another image.")
+        if st.button("🚀 Detect Risk"):
+            with st.spinner("Running detection..."):
+                # Save uploaded file temporarily
+                temp_dir = tempfile.mkdtemp()
+                image_path = os.path.join(temp_dir, uploaded_file.name)
+                with open(image_path, "wb") as f:
+                    f.write(uploaded_file.getbuffer())
+
+                # Generate a unique name for the output image
+                unique_id = uuid.uuid4().hex[:8]  # Short UUID
+                timestamp = int(time.time())  # Timestamp
+                new_image_name = f"BuildSmart_detected_risk_{unique_id}.png"  # Unique image name
+                new_image_path = os.path.join(predict_folder, new_image_name)
+
+                # Load YOLO model and perform inference
+                model = YOLO("../backend/PPE/models/best_2.pt")
+                results = model.predict(image_path, save=True)  # Save images in default location
+
+                # Find the latest prediction folder
+                saved_images = sorted(
+                    [f for f in os.listdir("runs/detect") if f.startswith("predict")], 
+                    key=lambda x: os.path.getctime(os.path.join("runs/detect", x)), 
+                    reverse=True
+                )
+
+                if saved_images:
+                    latest_predict_folder = os.path.join("runs/detect", saved_images[0])
+                    detected_images = [f for f in os.listdir(latest_predict_folder) if f.endswith((".png", ".jpg", ".jpeg"))]
+
+                    if detected_images:
+                        old_image_path = os.path.join(latest_predict_folder, detected_images[0])
+                        os.rename(old_image_path, new_image_path)  # Move and rename file
+
+                        # Display annotated image
+                        st.image(Image.open(new_image_path), caption="Annotated Image", use_column_width=True)
+
+                        # Show detected objects
+                        st.write("### 📌 Detected Objects:")
+                        for result in results:
+                            for box in result.boxes:
+                                class_id = int(box.cls)
+                                class_name = result.names[class_id]
+                                confidence = float(box.conf)
+                                bbox = box.xyxy.tolist()
+                                st.write(f"🔹 *Class:* {class_name}, *Confidence:* {confidence:.2f}, *Bounding Box:* {bbox}")
+                    else:
+                        st.error("Error: Could not find the saved prediction image.")
+                else:
+                    st.error("⚠️ No objects detected. Try another image.")
+
+
