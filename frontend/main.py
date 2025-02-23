@@ -20,12 +20,23 @@ from pages import (
     delay_report_generator_page,
     predict_delay_page  # Add this import
 )
+from pathlib import Path
 
 
 
 # Set up the Streamlit page
 st.set_page_config(page_title="BuildSmart", page_icon="🏗️", layout="wide")
-logo2 = Image.open('logo2.png')
+
+# Get the directory of the current script
+script_dir = Path(__file__).parent
+
+# Construct the full path to the image
+image_path = script_dir / 'logo2.png'
+
+# Open the image
+logo2 = Image.open(image_path)
+
+
 st.sidebar.image(logo2, use_container_width=True)
 
 
