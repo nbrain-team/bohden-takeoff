@@ -5,6 +5,7 @@
 #     asyncio.set_event_loop(asyncio.new_event_loop())
 import streamlit as st
 from dotenv import load_dotenv
+from PIL import Image
 from main_css import apply_custom_css
 from utils import get_base64_image
 from models import load_models_and_encoders
