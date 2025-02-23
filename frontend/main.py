@@ -1,3 +1,8 @@
+import asyncio
+try:
+    asyncio.get_running_loop()
+except RuntimeError:
+    asyncio.set_event_loop(asyncio.new_event_loop())
 import streamlit as st
 from dotenv import load_dotenv
 from main_css import apply_custom_css
@@ -14,6 +19,8 @@ from pages import (
     delay_report_generator_page,
     predict_delay_page  # Add this import
 )
+
+
 
 # Set up the Streamlit page
 st.set_page_config(page_title="BuildSmart", page_icon="🏗️", layout="wide")
