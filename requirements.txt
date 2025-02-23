@@ -21,3 +21,5 @@ fpdf
 xgboost
 asyncio
 tornado==5.0
+altair
+
