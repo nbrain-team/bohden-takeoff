@@ -22,14 +22,14 @@ from pathlib import Path
 base_dir = os.path.dirname(os.path.abspath(__file__))
 print(base_dir)
 def home_page():
-    st.markdown('<div class="landing-container">', unsafe_allow_html=True)
+    # st.markdown('<div class="landing-container">', unsafe_allow_html=True)
     image_path = os.path.join(base_dir, 'banner.png')
     banner = Image.open(image_path)
     st.image(banner, use_container_width=True)
-    st.markdown('<h1 class="main-title">🏗️ BuildSmart - AI for Smarter Construction</h1>', unsafe_allow_html=True)
-    st.write("🚀 AI-powered solutions for project risk assessment, cost optimization, and safety monitoring.")
-    st.markdown('Get Started Now!', unsafe_allow_html=True)
-    st.markdown("</div>", unsafe_allow_html=True)
+    st.title('🏗️ BuildSmart - AI for Smarter Construction')
+    st.subheader("🚀 AI-powered solutions for project risk assessment, cost optimization, and safety monitoring.")
+    st.subheader('Get Started Now!')
+   
 
 def dashboard_page():
     st.subheader("📊 Project Cost Overrun Prediction & Safety Analysis")
@@ -143,7 +143,7 @@ def supplier_recommendation_page():
             ["Supplier_Name", "Final_Score", "Avg_Cost_per_Unit (INR)", "Reliability_Score (0-1)",
             "Quality_Rating (1-5)", "Financial_Stability_Score", "Geo_Proximity (km)", "Lead_Time (days)"]
         ]
-    st.title("🔍 Supplier Recommendation System (Structured Data)")
+    st.subheader("🔍 Supplier Recommendation System (Structured Data)")
     right_sidebar = """
         <div class="right-sidebar">
             <h4>ℹ️ About Supplier Recommendation</h4>
@@ -395,7 +395,7 @@ def delay_report_generator_page():
             st.download_button(label="Download Report", data=open(report_path, "rb").read(), file_name=report_path, mime="application/pdf")
 
 def predict_delay_page():
-    st.title("🏗️ Construction Delay Prediction System")
+    st.subheader("🏗️ Construction Delay Prediction System")
 
     # Define paths
     base_dir = os.path.dirname(os.path.abspath(__file__))
@@ -407,9 +407,9 @@ def predict_delay_page():
     # Logo path
     logo2_path = os.path.join(base_dir, 'logo2.png')
 
-    # Display logo in Streamlit if it exists
-    if os.path.exists(logo2_path):
-        st.image(logo2_path, width=150, caption="BuildSmart AI")
+    # # Display logo in Streamlit if it exists
+    # if os.path.exists(logo2_path):
+    #     st.image(logo2_path, width=150, caption="BuildSmart AI")
 
     uploaded_file = st.file_uploader("Upload your construction project dataset (CSV)", type=["csv"])
     uploaded_image = st.file_uploader("Upload an image (optional)", type=["png", "jpg", "jpeg"])

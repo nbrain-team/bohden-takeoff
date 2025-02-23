@@ -62,7 +62,7 @@ def apply_custom_css():
             padding: 3rem;
             background-color: white;
             color: black !important; /* Make text black */
-            text-align: center;
+            text-align: left;
             border-radius: 10px;
             margin: 2rem;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Subtle shadow */
@@ -72,6 +72,7 @@ def apply_custom_css():
         h1, h2, h3 {
             color: black !important;
             font-family: 'Arial', sans-serif;
+            text-align: center;
         }
 
         /* Button Styling */
