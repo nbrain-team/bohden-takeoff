@@ -16,12 +16,18 @@ import plotly.graph_objects as go
 import requests
 import uuid
 import time
+from pathlib import Path
 
 
 def home_page():
     st.markdown('<div class="landing-container">', unsafe_allow_html=True)
-    banner = Image.open('banner.png')
+    script_dir = os.path.dirname(__file__)
+
+    # Construct the full path to the image
+    image_path = os.path.join(script_dir, 'banner.png')
     
+    # Open and display the image
+    banner = Image.open(image_path)
     st.image(banner, use_container_width=True)
     st.markdown('<h1 class="main-title">🏗️ BuildSmart - AI for Smarter Construction</h1>', unsafe_allow_html=True)
     st.write("🚀 AI-powered solutions for project risk assessment, cost optimization, and safety monitoring.")
