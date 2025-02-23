@@ -217,24 +217,34 @@ def supplier_recommendation_page():
 def chatbot_page():
     st.subheader("🤖 AI Construction Chatbot")
     st.write("💬 Ask anything about construction risks, safety, and cost optimization!")
+
     if "messages" not in st.session_state:
         st.session_state.messages = []
+
     for msg in st.session_state.messages:
         with st.chat_message(msg["role"]):
             st.markdown(msg["content"])
+
     if user_input := st.chat_input("Type your message..."):
         st.session_state.messages.append({"role": "user", "content": user_input})
         with st.chat_message("user"):
             st.markdown(user_input)
         with st.spinner("Thinking..."):
-            response = requests.post(f"http://127.0.0.1:5000/chatbot", json={"message": user_input})
-            if response.status_code == 200:
-                bot_response = response.json().get("response", "No response")
-                st.session_state.messages.append({"role": "assistant", "content": bot_response})
-                with st.chat_message("assistant"):
-                    st.markdown(bot_response)
-            else:
+            try:
+                response = requests.post(
+                    "http://127.0.0.1:5000/chatbot",
+                    json={"message": user_input},
+                    timeout=30  # Timeout after 10 seconds
+                )
+                response.raise_for_status()  # Raises an HTTPError for bad responses
+                data = response.json()
+                bot_response = data.get("response", "No response")
+            except requests.exceptions.RequestException as e:
+                bot_response = f"Error: {e}"
                 st.error("Chatbot failed to respond. Please try again.")
+            st.session_state.messages.append({"role": "assistant", "content": bot_response})
+            with st.chat_message("assistant"):
+                st.markdown(bot_response)
 
 def blueprint_detection_page(client):
     st.subheader("📸 Upload an Image for Blueprint Detection")
