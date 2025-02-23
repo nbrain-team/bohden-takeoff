@@ -232,7 +232,7 @@ def chatbot_page():
         with st.spinner("Thinking..."):
             try:
                 response = requests.post(
-                    "http://127.0.0.1:5000/chatbot",
+                    "http://0.0.0.0:5000/chatbot",
                     json={"message": user_input},
                     timeout=30  # Timeout after 10 seconds
                 )
