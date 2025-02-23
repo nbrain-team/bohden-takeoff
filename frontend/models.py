@@ -1,5 +1,6 @@
 import os
 import joblib
+from xgboost import XGBClassifier
 from together import Together
 
 def load_models_and_encoders():
@@ -14,25 +15,27 @@ def load_models_and_encoders():
     regressor_path = os.path.join(backend_dir, 'xgboost_metro_regressor.pkl')
     encoder_path = os.path.join(backend_dir, 'label_encoders.pkl')
 
-    # Check if the classifier file exists
+    # Load classifier model
     if not os.path.exists(metro_model_path):
         raise FileNotFoundError(f"Classifier file not found: {metro_model_path}")
     classifier = joblib.load(metro_model_path)
 
-    # Check if the regressor file exists
+    # Load regressor model
     if not os.path.exists(regressor_path):
         raise FileNotFoundError(f"Regressor file not found: {regressor_path}")
     regressor = joblib.load(regressor_path)
 
-    # Check if the encoder file exists
+    # Load label encoders
     if not os.path.exists(encoder_path):
         raise FileNotFoundError(f"Encoder file not found: {encoder_path}")
     label_encoders = joblib.load(encoder_path)
 
-    # Initialize the Together client with the API key from environment variables
+    # Initialize the Together API client
     api_key = os.getenv("TOGETHER_API_KEY1")
     if not api_key:
         raise EnvironmentError("TOGETHER_API_KEY1 environment variable not set.")
     client = Together(api_key=api_key)
+
+
 
     return classifier, regressor, label_encoders, client
