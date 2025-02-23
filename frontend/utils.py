@@ -1,5 +1,13 @@
 import base64
 import streamlit as st
+import os
+import requests
+
+# Together AI API Key (set in environment variable)
+api_key = os.getenv("TOGETHER_API_KEY1")
+TOGETHER_API_URL = "https://api.together.xyz/v1/chat/completions"
+
+
 
 def get_base64_image(image_path):
     with open(image_path, "rb") as img_file:
@@ -45,3 +53,25 @@ def generate_detection_explanation(client, detected_objects, detection_type):
         messages=[{"role": "user", "content": prompt}]
     )
     return response.choices[0].message.content
+
+def get_chatbot_response(user_input):
+    """Calls Together AI for chatbot responses"""
+    headers = {
+        "Authorization": f"Bearer {api_key}",
+        "Content-Type": "application/json"
+    }
+
+    payload = {
+        "model": "meta-llama/Llama-3.3-70B-Instruct-Turbo",  
+        "messages": [{"role": "user", "content": user_input}],
+        "max_tokens": 150,
+        "temperature": 0.7
+    }
+
+    try:
+        response = requests.post(TOGETHER_API_URL, json=payload, headers=headers)
+        response.raise_for_status()
+        data = response.json()
+        return data["choices"][0]["message"]["content"].strip()
+    except requests.exceptions.RequestException as e:
+        return f"Error: {e}"

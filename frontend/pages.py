@@ -1,6 +1,6 @@
 import streamlit as st
 import pandas as pd
-from utils import generate_ai_explanation, generate_detection_explanation
+from utils import generate_ai_explanation, generate_detection_explanation, get_chatbot_response
 from fpdf import FPDF
 from PIL import Image
 import matplotlib.pyplot as plt
@@ -230,18 +230,7 @@ def chatbot_page():
         with st.chat_message("user"):
             st.markdown(user_input)
         with st.spinner("Thinking..."):
-            try:
-                response = requests.post(
-                    "http://127.0.0.1:5000/chatbot",
-                    json={"message": user_input},
-                    timeout=30  # Timeout after 10 seconds
-                )
-                response.raise_for_status()  # Raises an HTTPError for bad responses
-                data = response.json()
-                bot_response = data.get("response", "No response")
-            except requests.exceptions.RequestException as e:
-                bot_response = f"Error: {e}"
-                st.error("Chatbot failed to respond. Please try again.")
+            bot_response = get_chatbot_response(user_input)  # Calls the function from utils.py
             st.session_state.messages.append({"role": "assistant", "content": bot_response})
             with st.chat_message("assistant"):
                 st.markdown(bot_response)
