@@ -20,7 +20,7 @@ plotly
 fpdf
 xgboost
 asyncio
-tornado==5.0
+tornado==6.4.2
 altair==4.2.2
 
 
