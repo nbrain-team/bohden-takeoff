@@ -18,15 +18,12 @@ import uuid
 import time
 from pathlib import Path
 
-
+# Determine the base directory
+base_dir = os.path.dirname(os.path.abspath(__file__))
+print(base_dir)
 def home_page():
     st.markdown('<div class="landing-container">', unsafe_allow_html=True)
-    script_dir = os.path.dirname(__file__)
-
-    # Construct the full path to the image
-    image_path = os.path.join(script_dir, 'banner.png')
-    
-    # Open and display the image
+    image_path = os.path.join(base_dir, 'banner.png')
     banner = Image.open(image_path)
     st.image(banner, use_container_width=True)
     st.markdown('<h1 class="main-title">🏗️ BuildSmart - AI for Smarter Construction</h1>', unsafe_allow_html=True)
@@ -100,9 +97,9 @@ def supplier_recommendation_page():
     from sklearn.preprocessing import MinMaxScaler
     import joblib
     import pandas as pd
-    model_path = "../backend/train/supply_chain_nlp/xgboost_model.pkl"
+    model_path = os.path.join(base_dir, "../backend/train/supply_chain_nlp/xgboost_model.pkl")
     model = joblib.load(model_path)
-    file_path = "../backend/train/supply_chain_nlp/construction_supply_chain_new.csv"
+    file_path = os.path.join(base_dir, "../backend/train/supply_chain_nlp/construction_supply_chain_new.csv")
     df = pd.read_csv(file_path)
     def preprocess_data(df):
         if all(col in df.columns for col in ["Reliability_Score (0-1)", "Quality_Rating (1-5)"]):
@@ -159,9 +156,6 @@ def supplier_recommendation_page():
 
     weights = {}  # Initialize dictionary
 
-   
-
-
     st.subheader("Adjust Weights")
 
     col1, _ = st.columns([9, 4])  # First column takes space, second is empty
@@ -191,8 +185,6 @@ def supplier_recommendation_page():
         weights["Cost_Impact"] = st.slider(
             "Cost Weight", 0.0, 1.0, 0.05, key="cost", label_visibility="collapsed"
         )
-
-
 
     total_weight = sum(weights.values())
     if total_weight > 1:
@@ -247,7 +239,7 @@ def chatbot_page():
 def blueprint_detection_page(client):
     st.subheader("📸 Upload an Image for Blueprint Detection")
     uploaded_file = st.file_uploader("Choose an image...", type=["jpg", "png", "jpeg"])
-    predict_folder = "runs/detect/predictBlueprint"
+    predict_folder = os.path.join(base_dir, "runs/detect/predictBlueprint")
     os.makedirs(predict_folder, exist_ok=True)
     if uploaded_file:
         st.image(uploaded_file, caption="Uploaded Image", use_container_width=True)
@@ -261,7 +253,7 @@ def blueprint_detection_page(client):
                 timestamp = int(time.time())
                 new_image_name = f"BuildSmart_detected_blueprint_{unique_id}.png"
                 new_image_path = os.path.join(predict_folder, new_image_name)
-                model = YOLO("../backend/blueprint.pt")
+                model = YOLO(os.path.join(base_dir, "../backend/blueprint.pt"))
                 results = model.predict(image_path, save=True)
                 saved_images = sorted(
                     [f for f in os.listdir("runs/detect") if f.startswith("predict")], 
@@ -300,7 +292,7 @@ def blueprint_detection_page(client):
 def risk_detection_page(client):
     st.subheader("📸 Upload a Construction Site Image for Risk Detection")
     uploaded_file = st.file_uploader("Choose an image...", type=["jpg", "png", "jpeg"])
-    predict_folder = "runs/detect/predictRisk"
+    predict_folder = os.path.join(base_dir, "runs/detect/predictRisk")
     os.makedirs(predict_folder, exist_ok=True)
     if uploaded_file:
         st.image(uploaded_file, caption="Uploaded Image", use_container_width=True)
@@ -314,7 +306,7 @@ def risk_detection_page(client):
                 timestamp = int(time.time())
                 new_image_name = f"BuildSmart_detected_risk_{unique_id}.png"
                 new_image_path = os.path.join(predict_folder, new_image_name)
-                model = YOLO("../backend/PPE/models/best_2.pt")
+                model = YOLO(os.path.join(base_dir, "../backend/PPE/models/best_2.pt"))
                 results = model.predict(image_path, save=True)
                 saved_images = sorted(
                     [f for f in os.listdir("runs/detect") if f.startswith("predict")], 
@@ -366,7 +358,7 @@ def risk_detection_page(client):
             ret, frame = cap.read()
             if not ret:
                 break
-            model = YOLO("../backend/PPE/models/best_2.pt")
+            model = YOLO(os.path.join(base_dir, "../backend/PPE/models/best_2.pt"))
             results = model(frame)
             for r in results:
                 for box in r.boxes:
@@ -409,8 +401,8 @@ def predict_delay_page():
     uploaded_file = st.file_uploader("Upload your construction project dataset (CSV)", type=["csv"])
     uploaded_image = st.file_uploader("Upload an image (optional)", type=["png", "jpg", "jpeg"])
 
-    model_path2 = "../backend/PPE/best_xgb_model.json"
-    train_columns_path2 = "../backend/PPE/train_columns.pkl"
+    model_path2 = os.path.join(base_dir, "../backend/PPE/best_xgb_model.json")
+    train_columns_path2 = os.path.join(base_dir, "../backend/PPE/train_columns.pkl")
 
     if os.path.exists(model_path2) and os.path.exists(train_columns_path2):
         loaded_model = XGBClassifier()
