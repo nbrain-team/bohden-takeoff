@@ -20,7 +20,9 @@ import time
 
 def home_page():
     st.markdown('<div class="landing-container">', unsafe_allow_html=True)
-    st.image("banner.png", use_container_width=True)
+    banner = Image.open('banner.png')
+    
+    st.image(banner, use_container_width=True)
     st.markdown('<h1 class="main-title">🏗️ BuildSmart - AI for Smarter Construction</h1>', unsafe_allow_html=True)
     st.write("🚀 AI-powered solutions for project risk assessment, cost optimization, and safety monitoring.")
     st.markdown('Get Started Now!', unsafe_allow_html=True)

@@ -17,7 +17,8 @@ from pages import (
 
 # Set up the Streamlit page
 st.set_page_config(page_title="BuildSmart", page_icon="🏗️", layout="wide")
-st.sidebar.image("logo2.png", use_container_width=True)
+logo2 = Image.open('logo2.png')
+st.sidebar.image(logo2, use_container_width=True)
 
 
 
