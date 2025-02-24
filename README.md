@@ -31,12 +31,12 @@ BuildSmart is an AI-powered construction optimization system that enhances effic
 ---
 
 ## 🏗️ Tech Stack
-- *Frontend*: Streamlit
+- *Frontend*: Streamlit, Custom CSS
 - *Backend*: Flask, FastAPI
-- *Machine Learning*: Scikit-learn, XGBoost
-- *Computer Vision*: OpenCV, TensorFlow/Keras
+- *Machine Learning*: Scikit-learn, XGBoost, Linear Regression
+- *Computer Vision*: OpenCV, TensorFlow, PyTorch
 - *NLP*: Hugging Face Transformers
-- *Database*: MySQL
+- *Generative AI*: Llama by Meta AI
 
 ---
 ## 🔹 Live Demo  
