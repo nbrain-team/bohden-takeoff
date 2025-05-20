@@ -17,10 +17,18 @@ import requests
 import uuid
 import time
 from pathlib import Path
+from dotenv import load_dotenv
 
 # Determine the base directory
 base_dir = os.path.dirname(os.path.abspath(__file__))
 print(base_dir)
+
+# Load environment variables
+load_dotenv()
+
+# Set backend URL
+BACKEND_URL = os.getenv('BACKEND_URL', 'http://127.0.0.1:5000')
+
 def home_page():
     # st.markdown('<div class="landing-container">', unsafe_allow_html=True)
     image_path = os.path.join(base_dir, 'banner.png')
@@ -44,7 +52,7 @@ def dashboard_page():
             external_factor = st.text_input("External Factor")
         if st.button("🔮 Predict Cost Overrun"):
             with st.spinner("Predicting..."):
-                response = requests.post(f"http://127.0.0.1:5000/predict", json={
+                response = requests.post(f"{BACKEND_URL}/predict", json={
                     "project_size": project_size,
                     "labor_count": labor_count,
                     "equipment_count": equipment_count,
