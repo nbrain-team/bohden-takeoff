@@ -4,9 +4,8 @@ import joblib
 from sklearn.preprocessing import StandardScaler
 from flask_cors import CORS
 import logging
-from ultralytics import YOLO
-import os
 from chatbot1 import get_chatbot_response  # Chatbot logic
+import os
 
 app = Flask(__name__)
 CORS(app)  # Enable CORS
@@ -15,7 +14,6 @@ logging.basicConfig(level=logging.DEBUG)
 # Load models
 cost_overrun_model = joblib.load('models/project_cost_overrun_model.pkl')
 scaler = joblib.load('models/scaler.pkl')
-yolo_model = YOLO("blueprint.pt")  # YOLO model for object detection
 
 @app.route('/predict', methods=['POST'])
 def predict():
@@ -52,10 +50,14 @@ def detect():
     file_path = os.path.join(temp_dir, file.filename)
     file.save(file_path)
 
-    # YOLO Inference
+    # YOLO Inference (lazy load)
+    from ultralytics import YOLO
+    yolo_model = YOLO("blueprint.pt")
     save_dir = os.path.join(os.getcwd(), "runs", "detect", "predict")
     os.makedirs(save_dir, exist_ok=True)
     results = yolo_model.predict(file_path, save=True, save_dir=save_dir)
+    del yolo_model
+    del results
 
     annotated_image_path = os.path.join(save_dir, file.filename)
     return jsonify({'annotated_image_path': annotated_image_path})
