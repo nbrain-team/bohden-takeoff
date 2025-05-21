@@ -24,3 +24,4 @@ asyncio
 tornado==6.4.2
 altair==4.2.2
 Flask
+flask-cors
